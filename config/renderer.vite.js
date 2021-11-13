@@ -1,5 +1,6 @@
-const { join } = require('path');
 import reactRefresh from '@vitejs/plugin-react-refresh';
+import WindiCSS from 'vite-plugin-windicss';
+const { join } = require('path');
 const { chrome } = require('./electron-dep-versions');
 /**
  * @type {import('vite').UserConfig}
@@ -12,7 +13,12 @@ module.exports = {
       '/@/': join(process.cwd(), './src/renderer') + '/',
     },
   },
-  plugins: [reactRefresh()],
+  plugins: [
+    reactRefresh(),
+    WindiCSS({
+      config: join(process.cwd(), './config/windi.config.js'),
+    }),
+  ],
   build: {
     target: `chrome${chrome}`,
     polyfillDynamicImport: false,

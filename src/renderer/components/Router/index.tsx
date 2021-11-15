@@ -11,7 +11,7 @@ const Router = () => {
       <Routes>
         <Route path="/" element={<SplashPage />} />
         <Route path="/menu" element={<MenuPage />} />
-        <Route path="/holiday" element={<HolidayPage />} />
+        <Route path="/holiday/:holidayIndex" element={<HolidayPage />} />
       </Routes>
     </HashRouter>
   );

@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import t from '/@/util/t';
+import { useContent, useStrings } from '../Content';
 
-export const useAutoExit = (time = 30) => {
+export const useAutoExit = () => {
   const navigate = useNavigate();
+
+  const time = useContent((c) => c.config.autoExit);
 
   useEffect(() => {
     if (!time) return;
@@ -36,21 +38,22 @@ export const useAutoExit = (time = 30) => {
   }, [time]);
 };
 
-const Exit = (props: { autoExit?: number }) => {
-  const { autoExit } = props;
+const Exit = () => {
   const navigate = useNavigate();
 
-  useAutoExit(autoExit);
+  const [exitText] = useStrings((c) => [c['exit']]);
+
+  useAutoExit();
 
   return (
-    <div className="absolute left-0 bottom-0">
+    <div className="absolute left-0 bottom-0 z-50">
       <div
-        className="m-5 cursor-pointer"
+        className="m-2.7vw cursor-pointer"
         onClick={() => {
           navigate('/');
         }}
       >
-        {t('exit')}
+        {exitText}
       </div>
     </div>
   );

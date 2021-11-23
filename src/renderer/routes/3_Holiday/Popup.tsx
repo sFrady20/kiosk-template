@@ -36,7 +36,7 @@ const Popup = (props: {
       initial="closed"
       animate="open"
       exit="closed"
-      className={`absolute flex left-0 top-0 w-full h-full backdrop-filter backdrop-blur-2vw z-30 ${
+      className={`absolute flex inset-0 backdrop-filter backdrop-blur-2vw z-30 ${
         type === 'textRight'
           ? 'bg-gradient-to-r to-white via-transparent from-transparent'
           : type === 'textLeft'
@@ -59,7 +59,7 @@ const Popup = (props: {
             }`}
           >
             <h2 className="text-size-2vw font-semibold">{holiday.name}</h2>
-            <h3 className="mt-0.5vw text-size-3.8vw font-light">
+            <h3 className="mt-2vw text-size-3.8vw max-w-21vw font-light">
               {tradition.name}
             </h3>
             <div className="mt-2vw text-size-1vw leading-1.4vw space-y-1vw">
@@ -68,12 +68,12 @@ const Popup = (props: {
                   ? tradition.description
                   : [tradition.description],
                 (s, i) => (
-                  <p key={i}>{s}</p>
+                  <p key={i} dangerouslySetInnerHTML={{ __html: s }} />
                 ),
               )}
             </div>
           </div>
-          <div className="flex-1 flex justify-center items-center relative">
+          <div className="flex-1 flex justify-center items-center relative z-10">
             <Graphic
               className="min-h-[60%] min-w-[60%] max-w-[95%] max-h-[80%] object-contain"
               src={
@@ -87,7 +87,7 @@ const Popup = (props: {
         <div className="flex-1 flex justify-center items-center">
           <div className="absolute left-2.7vw top-2.7vw">
             <h2 className="text-size-1.7vw font-semibold">{holiday.name}</h2>
-            <h3 className="mt-0.5vw text-size-3.6vw font-light">
+            <h3 className="mt-0.5vw text-size-3.6vw font-light max-w-18vw">
               {tradition.name}
             </h3>
           </div>
@@ -102,6 +102,10 @@ const Popup = (props: {
       >
         <Graphic className="w-2.5vw h-2.5vw" src="CloseIcon.svg" />
       </div>
+      <Graphic
+        className="absolute left-0 bottom-0 w-full pointer-events-none"
+        src="/HolidayOverlay.png"
+      />
     </motion.div>
   );
 };

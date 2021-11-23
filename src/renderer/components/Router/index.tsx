@@ -8,12 +8,12 @@ import { map, times } from 'lodash';
 import React, { useRef } from 'react';
 import { Routes, Route, useLocation } from 'react-router';
 import { HashRouter } from 'react-router-dom';
+import { toGraphicUrl, useContent } from '../Content';
 import SplashPage from '/@/routes/1_Splash';
 import MenuPage from '/@/routes/2_Menu';
 import HolidayPage from '/@/routes/3_Holiday';
 
-const levels = 5;
-const duration = 1.2;
+const levels = 6;
 
 const TransitionBar = (props: {
   index: number;
@@ -39,8 +39,9 @@ const TransitionBar = (props: {
         </defs>
       </svg>
       <motion.div
-        className="absolute bg-white inset-0 bg-gradient-to-b from-white to-[#eee]"
+        className="absolute bg-white inset-0 bg-cover"
         style={{
+          backgroundImage: `url(${toGraphicUrl('/TransitionBar.png')})`,
           filter: `url(#transition-${index})`,
         }}
       />
@@ -52,12 +53,15 @@ const AnimatedRoutes = () => {
   const location = useLocation();
 
   const transitionValue = useRef(new MotionValue(0)).current;
+  const transitionDuration = useContent(
+    (c) => c.config.transitionDuration || 0.8,
+  );
 
   return (
     <>
       <div className="fixed inset-0 flex flex-col z-100 pointer-events-none">
         {map(times(levels), (i) => (
-          <TransitionBar index={i} transitionValue={transitionValue} />
+          <TransitionBar key={i} index={i} transitionValue={transitionValue} />
         ))}
       </div>
       <AnimatePresence initial={false} exitBeforeEnter>
@@ -68,12 +72,16 @@ const AnimatedRoutes = () => {
             animate: {
               x1: 0,
               transition: {
-                duration,
+                duration: transitionDuration,
+                ease: 'easeIn',
               },
             },
             exit: {
               x1: 1,
-              transition: { duration },
+              transition: {
+                duration: transitionDuration,
+                ease: 'easeOut',
+              },
             },
           }}
           initial="initial"

@@ -59,7 +59,7 @@ const HolidayPage = () => {
                 ? holiday.description
                 : [holiday.description],
               (s, i) => (
-                <p key={i}>{s}</p>
+                <p key={i} dangerouslySetInnerHTML={{ __html: s }} />
               ),
             )}
           </div>

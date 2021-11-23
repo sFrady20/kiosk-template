@@ -37,7 +37,7 @@ const Graphic = (props: { src?: string; className?: string }) => {
       width="100%"
       height="100%"
       className={className}
-      src={src}
+      src={sanitizedSrc}
       controls={false}
       autoPlay={true}
       muted={true}

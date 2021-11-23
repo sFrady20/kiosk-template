@@ -5,7 +5,7 @@ import defaultContent, { defaultStringsContent } from './defaultContent';
 
 type TraditionSlide = {
   graphic: string;
-  caption: string;
+  caption?: string;
 };
 type Tradition =
   | {
@@ -21,6 +21,7 @@ type Tradition =
       direction: 'left' | 'right' | 'up' | 'down';
       name: string;
       thumbnail: string;
+      description: string[] | string;
       slides: TraditionSlide[];
     };
 type Holiday = {
@@ -44,6 +45,7 @@ const toGraphicUrl = (url: string) => {
 type ContentType = {
   config: {
     autoExit: number;
+    transitionDuration: number;
   };
   strings: typeof defaultStringsContent;
   holidays: Holiday[];

@@ -1,57 +1,34 @@
 import React, { useMemo, useState } from 'react';
-import { AnimatePresence, motion, MotionProps } from 'framer-motion';
-import { Tradition, TraditionSlide } from '/@/components/Content';
-import { clamp } from 'lodash';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Tradition } from '/@/components/Content';
+import { clamp, map } from 'lodash';
 import Graphic from '/@/components/Graphic';
 
 const variants = {
   enter: (direction: number) => {
     return {
-      x: direction > 0 ? '100%' : '-200%',
+      x: direction > 0 ? '100%' : '-100%',
       y: '-50%',
     };
   },
   center: {
     zIndex: 1,
-    x: '-50%',
+    x: '0%',
     y: '-50%',
+    transition: {
+      ease: 'easeOut',
+    },
   },
   exit: (direction: number) => {
     return {
       zIndex: 0,
-      x: direction < 0 ? '100%' : '-200%',
+      x: direction < 0 ? '100%' : '-100%',
       y: '-50%',
+      transition: {
+        ease: 'easeOut',
+      },
     };
   },
-};
-
-const SlideItem = (props: MotionProps & { slide: TraditionSlide }) => {
-  const { slide, ...innerProps } = props;
-  const { graphic, caption } = slide;
-  return (
-    <motion.div
-      {...innerProps}
-      variants={variants}
-      initial="enter"
-      animate="center"
-      exit="exit"
-      transition={{
-        x: { type: 'spring', stiffness: 300, damping: 30 },
-        opacity: { duration: 0.2 },
-      }}
-      className="rounded-2.7vw bg-[#aedee2] overflow-hidden absolute left-1/2 top-1/2 w-full"
-    >
-      <div className="h-27vw relative">
-        <Graphic
-          className="absolute left-0 top-0 w-full h-full overflow-hidden object-fill"
-          src={graphic}
-        />
-      </div>
-      {caption && (
-        <div className="px-3vw py-3vw text-size-1.3vw">{caption}</div>
-      )}
-    </motion.div>
-  );
 };
 
 const Slideshow = (props: { tradition: Tradition & { type: 'slideshow' } }) => {
@@ -77,13 +54,37 @@ const Slideshow = (props: { tradition: Tradition & { type: 'slideshow' } }) => {
         <Graphic className={'w-3.3vw h-3.3vw'} src={'LeftCaretIcon.svg'} />
       </div>
       <div className="w-55vw relative">
-        <AnimatePresence initial={false} custom={direction}>
-          <SlideItem
-            key={page}
-            custom={direction}
-            slide={tradition.slides[page]}
-          />
-        </AnimatePresence>
+        <div className="rounded-2.7vw bg-[#aedee2] w-full overflow-hidden">
+          <div className="h-28vw relative overflow-hidden">
+            <AnimatePresence initial={false} custom={direction}>
+              <motion.div
+                key={page}
+                custom={direction}
+                variants={variants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+              >
+                <Graphic
+                  className="absolute inset-0 overflow-hidden object-fill"
+                  src={tradition.slides[page].graphic}
+                />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+          {tradition.description && (
+            <div className="px-3vw py-2vw text-size-1vw leading-1.4vw space-y-0.5vw">
+              {map(
+                Array.isArray(tradition.description)
+                  ? tradition.description
+                  : [tradition.description],
+                (s, i) => (
+                  <p key={i} dangerouslySetInnerHTML={{ __html: s }} />
+                ),
+              )}
+            </div>
+          )}
+        </div>
       </div>
       <div
         className={hasNext ? 'cursor-pointer' : 'opacity-20'}

@@ -1,23 +1,26 @@
 import { AnimatePresence } from 'framer-motion';
-import { times, map, chain } from 'lodash';
+import { map, chain } from 'lodash';
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import Exit from '/@/components/Exit';
 import Popup from './Popup';
 import { Tradition, useContent } from '/@/components/Content';
+import Graphic from '/@/components/Graphic';
 
 const TraditionItem = (props: {
   tradition: Tradition;
   onClick?: () => void;
 }) => {
   const { tradition, onClick } = props;
-
   return (
     <div
       className="flex-1 flex justify-center items-center cursor-pointer"
       onClick={onClick}
     >
-      {tradition.graphic}
+      <Graphic
+        className={'max-w-[85%] max-h-[70%]'}
+        src={tradition.thumbnail}
+      />
     </div>
   );
 };
@@ -27,10 +30,10 @@ const BackButton = () => {
 
   return (
     <div
-      className="absolute right-2.7vw top-2.7vw cursor-pointer"
+      className="absolute right-1.7vw top-1.7vw p-1vw cursor-pointer rounded-full overflow-hidden"
       onClick={() => navigate('/menu')}
     >
-      Globe
+      <Graphic className="w-2.5vw h-2.5vw" src="GlobeIcon.svg" />
     </div>
   );
 };
@@ -50,18 +53,18 @@ const HolidayPage = () => {
           <h3 className="mt-0.5vw text-size-3.5vw font-light">
             {holiday.name}
           </h3>
-          <div className="mt-2vw text-size-1.1vw leading-1.4vw space-y-2vw">
+          <div className="mt-2vw text-size-1vw leading-1.4vw space-y-1vw">
             {map(
               Array.isArray(holiday.description)
                 ? holiday.description
                 : [holiday.description],
-              (s) => (
-                <p>{s}</p>
+              (s, i) => (
+                <p key={i}>{s}</p>
               ),
             )}
           </div>
         </div>
-        <div className="flex-1 flex flex-col divide-y-0.16vw divide-white ">
+        <div className="flex-1 flex flex-col divide-y-0.16vw divide-white mb-6.5vw">
           {chain(holiday.traditions)
             .map((t, i) => [t, i] as const)
             .chunk(3)
@@ -80,8 +83,17 @@ const HolidayPage = () => {
               </div>
             ))
             .value()}
+          {holiday.traditions.length < 4 && (
+            <div className="flex-1 flex flex-row divide-x-0.16vw divide-white justify-center items-center">
+              <Graphic className="w-full px-4.5vw" src={holiday.infographic} />
+            </div>
+          )}
         </div>
       </div>
+      <Graphic
+        className="absolute left-0 bottom-0 w-full pointer-events-none"
+        src="/HolidayOverlay.png"
+      />
       <AnimatePresence>
         {selectedTradition && (
           <Popup

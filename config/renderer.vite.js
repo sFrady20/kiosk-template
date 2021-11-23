@@ -1,5 +1,6 @@
-import reactRefresh from '@vitejs/plugin-react-refresh';
+import ReactRefresh from '@vitejs/plugin-react-refresh';
 import WindiCSS from 'vite-plugin-windicss';
+import ReactSvgPlugin from 'vite-plugin-react-svg';
 const { join } = require('path');
 const { chrome } = require('./electron-dep-versions');
 /**
@@ -14,10 +15,11 @@ module.exports = {
     },
   },
   plugins: [
-    reactRefresh(),
+    ReactRefresh(),
     WindiCSS({
       config: join(process.cwd(), './config/windi.config.js'),
     }),
+    ReactSvgPlugin(),
   ],
   build: {
     target: `chrome${chrome}`,

@@ -20,5 +20,6 @@
       "/@/*": ["./*"]
     },
     "types": ["../../types/importMeta", "vite/client"]
-  }
+  },
+  "exclude": ["public"]
 }

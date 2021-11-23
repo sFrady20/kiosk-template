@@ -4,6 +4,7 @@ import { Holiday, Tradition } from '/@/components/Content';
 import Snow from '/@/components/Snow';
 import Slideshow from './Slideshow';
 import { map } from 'lodash';
+import Graphic from '/@/components/Graphic';
 
 const Popup = (props: {
   holiday: Holiday;
@@ -35,7 +36,13 @@ const Popup = (props: {
       initial="closed"
       animate="open"
       exit="closed"
-      className="absolute flex left-0 top-0 w-full h-full backdrop-filter backdrop-blur-20px z-30"
+      className={`absolute flex left-0 top-0 w-full h-full backdrop-filter backdrop-blur-20px z-30 ${
+        type === 'textRight'
+          ? 'bg-gradient-to-r to-white via-transparent from-transparent'
+          : type === 'textLeft'
+          ? 'bg-gradient-to-l to-white via-transparent from-transparent'
+          : type === 'slideshow' && 'bg-gradient-to-t to-white from-transparent'
+      }`}
     >
       <Snow />
       {(type === 'textRight' || type === 'textLeft') && (
@@ -55,19 +62,19 @@ const Popup = (props: {
             <h3 className="mt-0.5vw text-size-3.8vw font-light">
               {tradition.name}
             </h3>
-            <div className="mt-2vw text-size-1.1vw leading-1.4vw space-y-2vw">
+            <div className="mt-2vw text-size-1vw leading-1.4vw space-y-1vw">
               {map(
                 Array.isArray(tradition.description)
                   ? tradition.description
                   : [tradition.description],
-                (s) => (
-                  <p>{s}</p>
+                (s, i) => (
+                  <p key={i}>{s}</p>
                 ),
               )}
             </div>
           </div>
           <div className="flex-1 flex justify-center items-center">
-            {tradition.graphic}
+            <Graphic src={tradition.animation} />
           </div>
         </div>
       )}
@@ -88,7 +95,7 @@ const Popup = (props: {
         }`}
         onClick={onClose}
       >
-        X
+        <Graphic className="w-2.5vw h-2.5vw" src="CloseIcon.svg" />
       </div>
     </motion.div>
   );

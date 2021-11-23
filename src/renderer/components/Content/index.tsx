@@ -1,6 +1,7 @@
-import { merge } from 'lodash';
+import { filter, flatMap, merge } from 'lodash';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { createContext, useContextSelector } from 'use-context-selector';
+import defaultContent, { defaultStringsContent } from './defaultContent';
 
 type TraditionSlide = {
   graphic: string;
@@ -11,118 +12,105 @@ type Tradition =
       type: 'textLeft' | 'textRight';
       direction: 'left' | 'right' | 'up' | 'down';
       name: string;
-      graphic: string;
+      thumbnail: string;
       description: string[] | string;
+      animation: string;
     }
   | {
       type: 'slideshow';
       direction: 'left' | 'right' | 'up' | 'down';
       name: string;
-      graphic: string;
+      thumbnail: string;
       slides: TraditionSlide[];
     };
 type Holiday = {
   name: string;
-  graphic: string;
+  thumbnail: string;
+  infographic: string;
   description: string[] | string;
   traditions: Tradition[];
 };
 
-const lorem = [
-  `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
-gravida malesuada felis, eu vehicula massa mollis eu. Maecenas
-augue enim, posuere ut justo scelerisque, aliquet rhoncus quam.
-Etiam convallis congue augue, ut ullamcorper nisl commodo dapibus.
-Aliquam erat volutpat. Maecenas sed ipsum diam. Nulla facilisi.
-Pellentesque habitant morbi tristique senectus et netus et
-malesuada fames ac turpis egestas.`,
-  `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
-gravida malesuada felis, eu vehicula massa mollis eu. Maecenas
-augue enim, posuere ut justo scelerisque, aliquet rhoncus quam.
-Etiam convallis congue augue, ut ullamcorper nisl commodo dapibus.
-Aliquam erat volutpat. Maecenas sed ipsum diam. Nulla facilisi.
-Pellentesque habitant morbi tristique senectus et netus et
-malesuada fames ac turpis egestas.`,
-];
+const toGraphicUrl = (url: string) => {
+  //trim
+  url = url.replaceAll(/(^[\/\\]|[\/\\]$)/gi, '');
 
-const defaultStringsContent = {
-  'splash/title': 'Holidays from around the world',
-  'splash/button': 'Begin Exploring',
-  exit: 'Exit Experience',
-} as const;
+  //url
+  url = `/graphics/${url}`;
+
+  return url;
+};
+
+type ContentType = {
+  config: {
+    autoExit: number;
+  };
+  strings: typeof defaultStringsContent;
+  holidays: Holiday[];
+};
 
 type ContentContextType = {
-  content: {
-    config: {
-      autoExit: number;
-    };
-    strings: typeof defaultStringsContent;
-    holidays: Holiday[];
+  content: ContentType;
+  lotties: {
+    [s: string]: any;
   };
 };
 const defaultContentContext: ContentContextType = {
-  content: {
-    config: {
-      autoExit: 60,
-    },
-    strings: defaultStringsContent,
-    holidays: [
-      {
-        name: 'Hanukkah',
-        graphic: 'hannukuh.json',
-        description: lorem,
-        traditions: [
-          {
-            type: 'textLeft',
-            direction: 'left',
-            name: 'The Menorah',
-            graphic: 'menorah.json',
-            description: lorem,
-          },
-          {
-            type: 'slideshow',
-            direction: 'down',
-            name: 'Challah',
-            graphic: 'challah.json',
-            slides: [
-              { graphic: 'challah1.png', caption: lorem[0] },
-              { graphic: 'challah2.png', caption: lorem[0] },
-            ],
-          },
-          {
-            type: 'textRight',
-            direction: 'right',
-            name: 'Dreidel',
-            graphic: 'dreidel.json',
-            description: lorem,
-          },
-        ],
-      },
-    ],
-  },
+  content: defaultContent,
+  lotties: [],
 };
 const ContentContext = createContext(defaultContentContext);
 
 const ContentProvider = (props: { children?: ReactNode }) => {
   const { children } = props;
-  const [content, setContent] = useState<
-    ContentContextType['content'] | undefined
-  >(undefined);
+  const [[content, lotties], setContent] = useState<
+    [ContentType | undefined, { [s: string]: any } | undefined]
+  >([undefined, undefined]);
 
   useEffect(() => {
-    fetch('/content.json').then(async (response) =>
-      setContent(
-        merge({}, defaultContentContext.content, await response.json()),
-      ),
-    );
+    (async () => {
+      const loadedContent = await (await fetch('/content.json')).json();
+
+      const newContent: ContentType = merge(
+        {},
+        defaultContentContext.content,
+        loadedContent,
+      );
+
+      const lotties: { [s: string]: any } = {};
+      const lottieFields: string[] = filter(
+        [
+          ...flatMap(newContent.holidays, (h) => [h.thumbnail, h.infographic]),
+          ...flatMap(newContent.holidays, (h) =>
+            flatMap(h.traditions, (t) =>
+              t.type === 'textLeft' || t.type === 'textRight'
+                ? [t.thumbnail, t.animation]
+                : [t.thumbnail],
+            ),
+          ),
+        ],
+        (s) => /\.(json|lottie)$/gi.test(s),
+      );
+
+      let field: string;
+      for (let i = 0; i < lottieFields.length; ++i) {
+        try {
+          field = toGraphicUrl(lottieFields[i]);
+          lotties[field] = await (await fetch(field)).json();
+        } catch (err) {}
+      }
+
+      setContent([newContent, lotties]);
+    })();
   }, [setContent]);
 
-  if (!content) return 'Loading';
+  if (!content || !lotties) return <>Loading</>;
 
   return (
     <ContentContext.Provider
       value={{
         content,
+        lotties,
       }}
     >
       {children}
@@ -135,13 +123,20 @@ function useContent<T>(
 ) {
   return useContextSelector(ContentContext, (c) => selector(c.content));
 }
-
 function useStrings<T>(
   selector: (content: ContentContextType['content']['strings']) => T,
 ) {
   return useContextSelector(ContentContext, (c) => selector(c.content.strings));
 }
+const useLottieData = (src: string) =>
+  useContextSelector(ContentContext, (c) => c.lotties[src]);
 
-export type { ContentContextType, Holiday, Tradition, TraditionSlide };
-export { ContentContext, useContent, useStrings };
+export type {
+  ContentContextType,
+  ContentType,
+  Holiday,
+  Tradition,
+  TraditionSlide,
+};
+export { ContentContext, useContent, useStrings, useLottieData, toGraphicUrl };
 export default ContentProvider;

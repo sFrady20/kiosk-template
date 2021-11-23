@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useContent, useStrings } from '../Content';
+import Graphic from '../Graphic';
 
 export const useAutoExit = () => {
   const navigate = useNavigate();
@@ -48,12 +49,15 @@ const Exit = () => {
   return (
     <div className="absolute left-0 bottom-0 z-50">
       <div
-        className="m-2.7vw cursor-pointer"
+        className="mx-1.7vw my-1.3vw p-1vw cursor-pointer flex flex-row items-center space-x-1vw"
         onClick={() => {
           navigate('/');
         }}
       >
-        {exitText}
+        <Graphic className="w-1.5vw h-1.5vw" src="HomeIcon.svg" />
+        <span className="text-size-1.1vw font-bold text-color-[#7C6992]">
+          {exitText}
+        </span>
       </div>
     </div>
   );

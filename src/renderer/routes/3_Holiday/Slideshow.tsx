@@ -41,13 +41,15 @@ const SlideItem = (props: MotionProps & { slide: TraditionSlide }) => {
       }}
       className="rounded-2.7vw bg-[#aedee2] overflow-hidden absolute left-1/2 top-1/2 w-full"
     >
-      <div className="h-25vw relative">
+      <div className="h-27vw relative">
         <Graphic
           className="absolute left-0 top-0 w-full h-full overflow-hidden object-fill"
           src={graphic}
         />
       </div>
-      <div className="px-3vw py-3vw text-size-1.3vw">{caption}</div>
+      {caption && (
+        <div className="px-3vw py-3vw text-size-1.3vw">{caption}</div>
+      )}
     </motion.div>
   );
 };

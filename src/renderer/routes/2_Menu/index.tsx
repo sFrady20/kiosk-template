@@ -25,10 +25,7 @@ const MenuPage = () => {
 
   return (
     <>
-      <motion.div
-        variants={{}}
-        className="flex-1 flex flex-col w-full divide-y-0.16vw divide-white"
-      >
+      <div className="flex-1 flex flex-col w-full divide-y-0.16vw divide-white">
         {chain(holidays)
           .map((h, i) => [h, i] as const)
           .chunk(3)
@@ -43,7 +40,7 @@ const MenuPage = () => {
             </div>
           ))
           .value()}
-      </motion.div>
+      </div>
       <Graphic
         className="absolute left-0 bottom-0 w-full pointer-events-none"
         src="/MenuOverlay.png"

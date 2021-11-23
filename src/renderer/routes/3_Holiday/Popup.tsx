@@ -32,11 +32,11 @@ const Popup = (props: {
             direction === 'up' ? '100%' : direction === 'down' ? '-100%' : '0%',
         },
       }}
-      transition={{ type: 'spring', stiffness: 400, damping: 40 }}
+      transition={{ duration: 0.6 }}
       initial="closed"
       animate="open"
       exit="closed"
-      className={`absolute flex left-0 top-0 w-full h-full backdrop-filter backdrop-blur-20px z-30 ${
+      className={`absolute flex left-0 top-0 w-full h-full backdrop-filter backdrop-blur-2vw z-30 ${
         type === 'textRight'
           ? 'bg-gradient-to-r to-white via-transparent from-transparent'
           : type === 'textLeft'
@@ -73,8 +73,13 @@ const Popup = (props: {
               )}
             </div>
           </div>
-          <div className="flex-1 flex justify-center items-center">
-            <Graphic src={tradition.animation} />
+          <div className="flex-1 flex justify-center items-center relative">
+            <Graphic
+              className="min-h-[60%] min-w-[60%] max-w-[95%] max-h-[80%] object-contain"
+              src={
+                tradition.animation ? tradition.animation : tradition.thumbnail
+              }
+            />
           </div>
         </div>
       )}

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router';
 import Snow from '/@/components/Snow';
 import { useStrings } from '/@/components/Content';
 import Graphic from '/@/components/Graphic';
-import { motion } from 'framer-motion';
 
 const SplashPage = () => {
   const navigate = useNavigate();
@@ -16,7 +15,7 @@ const SplashPage = () => {
   return (
     <>
       <Snow />
-      <motion.div className="flex flex-col items-start">
+      <div className="flex flex-col items-start">
         <div className="text-size-6vw leading-7vw font-light w-50vw">
           {titleText}
         </div>
@@ -31,7 +30,7 @@ const SplashPage = () => {
           className="absolute left-0 bottom-0 w-full pointer-events-none"
           src="/HomeOverlay.png"
         />
-      </motion.div>
+      </div>
     </>
   );
 };

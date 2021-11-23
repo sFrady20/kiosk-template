@@ -34,6 +34,8 @@ const Graphic = (props: { src?: string; className?: string }) => {
     <LottieWrapper src={sanitizedSrc} />
   ) : isVideo ? (
     <video
+      width="100%"
+      height="100%"
       className={className}
       src={src}
       controls={false}

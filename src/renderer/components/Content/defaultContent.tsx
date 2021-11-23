@@ -8,7 +8,7 @@ const defaultStringsContent = {
 
 const defaultContent: ContentType = {
   config: {
-    autoExit: 60,
+    autoExit: 60 * 5,
   },
   strings: defaultStringsContent,
   holidays: [

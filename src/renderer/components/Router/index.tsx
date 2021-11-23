@@ -1,100 +1,97 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import { filter, map, times } from 'lodash';
-import React, { ReactNode, useMemo } from 'react';
+import {
+  AnimatePresence,
+  motion,
+  MotionValue,
+  useTransform,
+} from 'framer-motion';
+import { map, times } from 'lodash';
+import React, { useRef } from 'react';
 import { Routes, Route, useLocation } from 'react-router';
 import { HashRouter } from 'react-router-dom';
 import SplashPage from '/@/routes/1_Splash';
 import MenuPage from '/@/routes/2_Menu';
 import HolidayPage from '/@/routes/3_Holiday';
 
-const AnimatedRoute = (props: { children: ReactNode }) => {
-  const { children } = props;
+const levels = 5;
+const duration = 1.2;
+
+const TransitionBar = (props: {
+  index: number;
+  transitionValue: MotionValue<number>;
+}) => {
+  const { index, transitionValue } = props;
+  const dx = useTransform(transitionValue, (tv) => {
+    let ntv = tv;
+    //loop
+    ntv = ((ntv + 2) % 2) - 1;
+    //scale
+    ntv *= -3000 * ((ntv > 0 ? index : levels - index) / levels) - 500;
+    return ntv;
+  });
 
   return (
-    <motion.div
-      variants={{
-        initial: { opacity: 0 },
-        animate: { transition: { when: 'beforeChildren' } },
-        exit: { transition: { when: 'afterChildren' } },
-      }}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      className="contents"
-    >
-      {children}
-    </motion.div>
+    <div className="flex-1 relative">
+      <svg className="absolute -top-1000px">
+        <defs>
+          <filter id={`transition-${index}`}>
+            <motion.feOffset dy={dx} />
+          </filter>
+        </defs>
+      </svg>
+      <motion.div
+        className="absolute bg-white inset-0 bg-gradient-to-b from-white to-[#eee]"
+        style={{
+          filter: `url(#transition-${index})`,
+        }}
+      />
+    </div>
   );
 };
 
 const AnimatedRoutes = () => {
   const location = useLocation();
 
-  return (
-    <Transition>
-      <AnimatePresence initial={true} exitBeforeEnter>
-        <Routes key={location.pathname} location={location}>
-          <Route
-            path="/"
-            element={
-              <AnimatedRoute>
-                <SplashPage />
-              </AnimatedRoute>
-            }
-          />
-          <Route
-            path="/menu"
-            element={
-              <AnimatedRoute>
-                <MenuPage />
-              </AnimatedRoute>
-            }
-          />
-          <Route
-            path="/holiday/:holidayIndex"
-            element={
-              <AnimatedRoute>
-                <HolidayPage />
-              </AnimatedRoute>
-            }
-          />
-        </Routes>
-      </AnimatePresence>
-    </Transition>
-  );
-};
-
-const levels = 5;
-const Transition = (props: { children?: ReactNode }) => {
-  const { children } = props;
+  const transitionValue = useRef(new MotionValue(0)).current;
 
   return (
     <>
-      <div className="fixed inset-0 flex flex-col z-100 hidden">
+      <div className="fixed inset-0 flex flex-col z-100 pointer-events-none">
         {map(times(levels), (i) => (
-          <div className="flex-1 relative">
-            <svg className="absolute -top-1000px">
-              <defs>
-                <filter id={`transition-${i}`}>
-                  <feDropShadow
-                    dx={0}
-                    dy={0}
-                    stdDeviation={200}
-                    color="black"
-                  />
-                </filter>
-              </defs>
-            </svg>
-            <div
-              className="absolute bg-white inset-0"
-              style={{
-                filter: `url(#transition-${i})`,
-              }}
-            />
-          </div>
+          <TransitionBar index={i} transitionValue={transitionValue} />
         ))}
       </div>
-      {children}
+      <AnimatePresence initial={false} exitBeforeEnter>
+        <motion.div
+          key={location.pathname}
+          variants={{
+            initial: { x1: -1 },
+            animate: {
+              x1: 0,
+              transition: {
+                duration,
+              },
+            },
+            exit: {
+              x1: 1,
+              transition: { duration },
+            },
+          }}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          className="contents"
+          onUpdate={(latest) => {
+            const val = latest.x1 as number;
+            transitionValue.set(val);
+          }}
+        >
+          <Routes location={location}>
+            <Route path="/" element={<SplashPage />} />
+            <Route path="/menu" element={<MenuPage />} />
+            <Route path="/holiday/:holidayIndex" element={<HolidayPage />} />
+          </Routes>
+        </motion.div>
+      </AnimatePresence>
     </>
   );
 };

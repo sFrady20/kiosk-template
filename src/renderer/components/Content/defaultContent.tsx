@@ -37,7 +37,7 @@ const defaultContent: ContentType = {
             'The candles are placed in the menorah from right to left but are lit from left to right.',
             'It is lit around nightfall each of the eight nights of Chanukah. Every night, another candle is added, so on the eighth night all eight candles, plus the shamash, are burning bright.',
           ],
-          animation: 'Menorah.json',
+          animation: 'Menorah.webm',
         },
         {
           type: 'slideshow',
@@ -70,7 +70,7 @@ const defaultContent: ContentType = {
               <li>When one person has won everything, that round of the game is over! Winners often receive chocolate coins called gelt.</li>
             </ul>`,
           ],
-          animation: 'Dreidel.json',
+          animation: 'Dreidel.webm',
         },
       ],
     },
@@ -135,7 +135,7 @@ const defaultContent: ContentType = {
           thumbnail: 'Kinara.png',
           description:
             'The candle-lighting ceremony, central to the celebration of Kwanzaa, takes place when all members of a family are present. Children take an active role in all activities. Kwanzaa is represented by three symbolic colors: Black, for the color of African peoples everywhere, is the center candle. Three red candles represent the blood of the ancestors and are placed to the left of the black candle. Three green candles that symbolize the earth, life, and the ideas and promise of the future, are placed to the right. Beginning Dec. 26 with the black mushumaa, a different candle is lit each day, alternating from left to right. After the candle lighting, the principle of the day is discussed.',
-          animation: 'Kinara-Loop.webm',
+          animation: 'CandleLighting-Loop.webm',
         },
         {
           type: 'slideshow',
@@ -304,10 +304,10 @@ const defaultContent: ContentType = {
           type: 'textRight',
           direction: 'right',
           name: 'Diyas',
-          thumbnail: 'Diyas.png',
+          thumbnail: 'Dia.png',
           description:
             'A diya is made from clay and has a cotton wick dipped in ghee or vegetable oil. The light represents moving from darkness into the light. The oil in the diya symbolizes negatives in the human mind. The wick is symbolic of the atma. The lighting of diyas signifies getting rid of selfish thoughts. Diya is essential in Hinduism because it signifies purity, goodness, good luck, and power. The presence of light means the nonexistence of darkness and evil forces. Diwali is celebrated on the new moon day when there is supreme darkness everywhere. Lighting the lamp in homes during puja removes the darkness from the mind and heart.',
-          animation: 'Diyas-Loop.webm',
+          animation: 'Dia-Loop.webm',
         },
       ],
     },

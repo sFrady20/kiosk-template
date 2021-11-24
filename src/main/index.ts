@@ -1,6 +1,9 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, screen } from 'electron';
 import { join } from 'path';
 import { format } from 'url';
+import serve from 'electron-serve';
+
+const loadURL = serve({ directory: '../../public/' });
 
 const gotTheLock = app.requestSingleInstanceLock();
 
@@ -29,8 +32,22 @@ if (!gotTheLock) {
   let mainWindow: BrowserWindow | null = null;
 
   async function createWindow() {
+    const display = screen.getPrimaryDisplay();
+
     mainWindow = new BrowserWindow({
       show: false,
+      x: display.workArea.x,
+      y: display.workArea.y,
+      width: display.workAreaSize.width,
+      height: display.workAreaSize.height,
+      movable: false,
+      kiosk: true,
+      fullscreen: true,
+      autoHideMenuBar: true,
+      resizable: false,
+      maxWidth: 10000,
+      maxHeight: 10000,
+      frame: false,
       webPreferences: {
         preload: join(__dirname, '../preload/index.cjs.js'),
         contextIsolation: env.MODE !== 'test', // Spectron tests can't work with contextIsolation: true
@@ -44,17 +61,20 @@ if (!gotTheLock) {
      * Vite dev server for development.
      * `file://../renderer/index.html` for production and test
      */
-    const URL =
-      env.MODE === 'development'
-        ? env.VITE_DEV_SERVER_URL
-        : format({
-            protocol: 'file',
-            pathname: join(__dirname, '../renderer/index.html'),
-            slashes: true,
-          });
+    if (env.MODE === 'production') {
+      await loadURL(mainWindow);
+    } else {
+      const URL =
+        env.MODE === 'development'
+          ? env.VITE_DEV_SERVER_URL
+          : format({
+              protocol: 'file',
+              pathname: join(__dirname, '../renderer/index.html'),
+              slashes: true,
+            });
+      await mainWindow.loadURL(URL);
+    }
 
-    await mainWindow.loadURL(URL);
-    mainWindow.maximize();
     mainWindow.show();
 
     if (env.MODE === 'development') {

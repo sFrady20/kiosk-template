@@ -1,6 +1,6 @@
 {
-  "name": "vite-electron-react-starter",
-  "description": "fork of @cawa-93/vite-electron-builder for react.",
+  "name": "truist-holiday",
+  "description": "Truist Holiday Guide",
   "private": true,
   "main": "main/index.cjs.js",
   "scripts": {
@@ -48,6 +48,7 @@
     "windicss": "^3.2.1"
   },
   "dependencies": {
+    "electron-serve": "^1.1.0",
     "electron-updater": "^4.3.5",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",

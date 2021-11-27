@@ -37,7 +37,7 @@ const defaultContent: ContentType = {
             'The candles are placed in the menorah from right to left but are lit from left to right.',
             'It is lit around nightfall each of the eight nights of Chanukah. Every night, another candle is added, so on the eighth night all eight candles, plus the shamash, are burning bright.',
           ],
-          animation: 'Menorah.webm',
+          animation: 'Menorah-Loop.webm',
         },
         {
           type: 'slideshow',
@@ -70,7 +70,7 @@ const defaultContent: ContentType = {
               <li>When one person has won everything, that round of the game is over! Winners often receive chocolate coins called gelt.</li>
             </ul>`,
           ],
-          animation: 'Dreidel.webm',
+          animation: 'Dreidel-Loop.webm',
         },
       ],
     },

@@ -68,7 +68,6 @@ const AnimatedRoutes = () => {
         <motion.div
           key={location.pathname}
           variants={{
-            initial: { x1: -1 },
             animate: {
               x1: 0,
               transition: {

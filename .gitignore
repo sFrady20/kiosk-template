@@ -54,3 +54,12 @@ types/env.d.ts
 
 # Editor-based Rest Client
 .idea/httpRequests
+
+# Yarn Berry
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
